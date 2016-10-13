@@ -1,0 +1,2 @@
+# lifegame
+はじめてのgit練習
