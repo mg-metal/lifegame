@@ -1,0 +1,188 @@
+const width -> 100
+const height -> 100
+
+const die -> 0
+const alive -> 1
+
+const curState -> 10000
+const nxtState -> 20000
+const tmpX -> 100
+const tmpY -> 200
+
+
+memory[55001] -> 1
+
+set_Honeycomb(0, 0)
+set_Honeycomb(5, 5)
+set_Honeycomb(8, 3)
+set_Honeycomb(10, 10)
+set_Honeycomb(40, 30)
+set_Honeycomb(30, 50)
+set_Honeycomb(20, 20)
+set_Honeycomb(25, 40)
+
+while 1
+   clear()
+   update()
+   display()
+   memory[55000] -> 1
+
+
+def set_Honeycomb(_x, _y)
+   setCurState(_x + 1, _y + 0, alive)
+   setCurState(_x + 0, _y + 1, alive)
+   setCurState(_x + 0, _y + 2, alive)
+   setCurState(_x + 2, _y + 1, alive)
+   setCurState(_x + 2, _y + 2, alive)
+   setCurState(_x + 1, _y + 3, alive)
+   setCurState(_x + 1, _y + 1, alive)
+
+
+
+def update()
+   tmpCurState -> 0
+   cntArndAlive -> 0
+   y -> 0
+   while y < 70
+      x -> 0
+      while x < 70
+         tmpCurState -> getCurState(x, y)
+         cntArndAlive -> getCntAroundAlive(x, y)
+         if cntArndAlive <= 1
+            setNxtState(x, y, die)
+         if cntArndAlive >= 4
+            setNxtState(x, y, die)
+         if (cntArndAlive = 2) * (tmpCurState = alive)
+            setNxtState(x, y, alive)
+         if cntArndAlive = 3
+            setNxtState(x, y, alive)
+         x -> x + 1
+      y -> y + 1
+
+
+
+
+def display()
+   y -> 0
+   while y < height
+      x -> 0
+      while x < width
+         tmpState -> getCurState(x, y)
+         memory[60000 + (y * width) + x] -> 990099 * tmpState
+         tmpState -> getNxtState(x, y)
+         setCurState(x, y, tmpState)
+         x -> x + 1
+      y -> y + 1
+
+def clear()
+   i -> 0
+   while i < 10000
+      memory[60000 + i] -> 0
+      i -> i + 1
+
+def setCurState(_x, _y, _state)
+   curState[(_y * width) + _x] -> _state
+
+def setNxtState(_x, _y, _state)
+   nxtState[(_y * width) + _x] -> _state
+
+def getCurState(_x, _y)
+   out -> curState[(_y * width) + _x]
+
+def getNxtState(_x, _y)
+   out -> nxtState[(_y * width) + _x]
+
+
+def getCntAroundAlive(_x, _y)
+   num -> 0
+   num -> num + getInfo_LU(_x, _y)
+   num -> num + getInfo_Up(_x, _y)
+   num -> num + getInfo_RU(_x, _y)
+   num -> num + getInfo_Right(_x, _y)
+   num -> num + getInfo_RD(_x, _y)
+   num -> num + getInfo_Down(_x, _y)
+   num -> num + getInfo_LD(_x, _y)
+   num -> num + getInfo_Left(_x, _y)
+   out -> num
+
+def getInfo_LU(_x, _y)
+   tmpX[0] -> _x - 1
+   tmpY[0] -> _y - 1
+   state -> 0
+   if (tmpX[0] < 0) + (tmpY[0] < 0)
+      state -> 0
+   if (tmpX[0] >= 0) * (tmpY[0] >= 0)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_Up(_x, _y)
+   tmpX[0] -> _x
+   tmpY[0] -> _y - 1
+   state -> 0
+   if (tmpY[0] < 0)
+      state -> 0
+   if (tmpY[0] >= 0)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_RU(_x, _y)
+   tmpX[0] -> _x + 1
+   tmpY[0] -> _y - 1
+   state -> 0
+   if (tmpX[0] > width) + (tmpY[0] < 0)
+      state -> 0
+   if (tmpX[0] <= width) * (tmpY[0] >= 0)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_Right(_x, _y)
+   tmpX[0] -> _x + 1
+   tmpY[0] -> _y
+   state -> 0
+   if (tmpX[0] > width)
+      state -> 0
+   if (tmpX[0] <= width)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_RD(_x, _y)
+   tmpX[0] -> _x + 1
+   tmpY[0] -> _y + 1
+   state -> 0
+   if (tmpX[0] > width) + (tmpY[0] > height)
+      state -> 0
+   if (tmpX[0] <= width) * (tmpY[0] <= height)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_Down(_x, _y)
+   tmpX[0] -> _x
+   tmpY[0] -> _y + 1
+   state -> 0
+   if (tmpY[0] > height)
+      state -> 0
+   if (tmpY[0] <= height)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_LD(_x, _y)
+   tmpX[0] -> _x - 1
+   tmpY[0] -> _y + 1
+   state -> 0
+   if (tmpX[0] < 0) + (tmpY[0] > height)
+      state -> 0
+   if (tmpX[0] >= 0) * (tmpY[0] <= height)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+def getInfo_Left(_x, _y)
+   tmpX[0] -> _x - 1
+   tmpY[0] -> _y
+   state -> 0
+   if (tmpX[0] < 0)
+      state -> 0
+   if (tmpX[0] >= 0)
+      state -> curState[(tmpY[0] * width) + tmpX[0]]
+   out -> state
+
+
